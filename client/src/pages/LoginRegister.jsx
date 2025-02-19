@@ -12,50 +12,46 @@ const LoginRegister = () => {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
 
-    const endpoint = isLogin ? "/api/v1/clients/login" : "/api/v1/clients/register";
-    const payload = isLogin ? { email: username, password } : { name, lastname, email: username, password };
-    
-    
-    
+    const endpoint = isLogin ? "http://localhost:6655/api/v1/users/login" : "http://localhost:6655/api/v1/clients/register";
+    const payload = isLogin ? { username, password } : { name, lastname, username, password };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError(null);
 
+        console.log("Iniciando solicitud a:", endpoint);
+        console.log("Payload enviado:", payload);
+
         try {
+            const response = await fetch(endpoint, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({ message: "Error desconocido" }));
+                throw new Error(errorData.message || `HTTP error ${response.status}`);
+            }
+
+            const data = await response.json();
+
             if (isLogin) {
-                await loginUser(email, password);
-                window.location.href = "/dashboard";
+                console.log("Login exitoso, redirigiendo a /dashboard");
+                window.location.href = "/";
             } else {
-                await registerUser(name, email, password);
+                console.log("Registro exitoso, cambiando a modo login");
                 setIsLogin(true);
             }
+
         } catch (err) {
             setError(err.message || "Error al procesar la solicitud");
         } finally {
             setLoading(false);
         }
-    try {
-        const response = await fetch(endpoint, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-        });
-        
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.message || "Error en la solicitud");
-        
-        if (isLogin) {
-            window.location.href = "/dashboard";
-        } else {
-            setIsLogin(true);
-        }
-    } catch (err) {
-        setError(err.message || "Error al procesar la solicitud");
-    } finally {
-        setLoading(false);
-    }
-};
+    };
+
 
     return (
         <div className="bg-black text-white min-h-screen flex justify-center items-center">
@@ -78,7 +74,7 @@ const LoginRegister = () => {
                             <div>
                                 <label className="block text-sm text-gray-700">Nombre de usuario</label>
                                 <input
-                                    type="email"
+                                    type="text"
                                     className="w-full p-3 bg-gray-100 rounded focus:ring-2 focus:ring-gray-500 text-black"
                                     value={username}
                                     onChange={(e) => setUsername(e.target.value)}
@@ -145,6 +141,7 @@ const LoginRegister = () => {
                                 <label className="block text-sm text-gray-700">Nombre</label>
                                 <input
                                     type="text"
+                                    id="name"
                                     className="w-full p-3 bg-gray-100 rounded focus:ring-2 focus:ring-gray-500 text-black"
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
@@ -154,6 +151,7 @@ const LoginRegister = () => {
                             <div>
                                 <label className="block text-sm text-gray-700">Apellido</label>
                                 <input
+                                    id="lastname"
                                     type="text"
                                     className="w-full p-3 bg-gray-100 rounded focus:ring-2 focus:ring-gray-500 text-black"
                                     value={lastname}
@@ -165,6 +163,7 @@ const LoginRegister = () => {
                                 <label className="block text-sm text-gray-700">Nombre de usuario</label>
                                 <input
                                     type="text"
+                                    id="username"
                                     className="w-full p-3 bg-gray-100 rounded focus:ring-2 focus:ring-gray-500 text-black"
                                     value={username}
                                     onChange={(e) => setUsername(e.target.value)}
@@ -175,6 +174,7 @@ const LoginRegister = () => {
                                 <label className="block text-sm text-gray-700">Contraseña</label>
                                 <input
                                     type="password"
+                                    id="password"
                                     className="w-full p-3 bg-gray-100 rounded focus:ring-2 focus:ring-gray-500 text-black"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
