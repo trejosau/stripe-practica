@@ -1,13 +1,13 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../config/db.config';
-import Client from './Client.model';
-import { OrderAttributes, OrderCreationAttributes } from '../types/models/Order';
 
-class Order extends Model<OrderAttributes, OrderCreationAttributes> implements OrderAttributes {
+class Order extends Model {
     public id!: string;
-    public client_id!: string;
+    public user_id!: string;
+    public total_amount!: number;
+    public payment_status!: 'pending' | 'confirmed' | 'failed';
+    public stripe_payment_id!: string | null; // ID del pago en Stripe
     public total!: number;
-    public status!: 'pending' | 'delivered' | 'canceled';
 }
 
 Order.init(
@@ -17,28 +17,28 @@ Order.init(
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true,
         },
-        client_id: {
+        user_id: {
             type: DataTypes.UUID,
             allowNull: false,
-            references: {
-                model: Client,
-                key: 'id',
-            },
         },
-        total: {
-            type: DataTypes.DOUBLE,
+        total_amount: {
+            type: DataTypes.FLOAT,
             allowNull: false,
         },
-        status: {
-            type: DataTypes.ENUM('pending', 'in_progress', 'completed', 'cancelled'),
+        payment_status: {
+            type: DataTypes.ENUM('pending', 'confirmed', 'failed'),
+            defaultValue: 'pending',
             allowNull: false,
-            defaultValue: 'pending', // Estado por defecto
+        },
+        stripe_payment_id: {
+            type: DataTypes.STRING,
+            allowNull: true, // Se llena cuando el pago se confirma
         },
     },
     {
         sequelize,
         tableName: 'orders',
-        timestamps: true, // Si quieres manejar createdAt y updatedAt
+        timestamps: true,
     }
 );
 

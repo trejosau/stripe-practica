@@ -3,7 +3,7 @@ import { OrderCreationAttributes } from '../types/models/Order';
 
 export class OrderRepository {
 
-    static async create(order: OrderCreationAttributes) {
+    async create(order: OrderCreationAttributes) {
         try {
             return await Order.create(order);
         } catch (error) {
@@ -12,7 +12,14 @@ export class OrderRepository {
         }
     }
 
-    static async updateTotal(orderId: string, total: number) {
+    async updatePaymentStatus(orderId: string, status: string, stripePaymentId: string) {
+        return await Order.update(
+            { payment_status: status, stripe_payment_id: stripePaymentId },
+            { where: { id: orderId } }
+        );
+    }
+
+    async updateTotal(orderId: string, total: number) {
         try {
             const order = await Order.findByPk(orderId);
             if (!order) {
@@ -27,7 +34,7 @@ export class OrderRepository {
         }
     }
 
-    static async findById(orderId: string) {
+    async findById(orderId: string) {
         try {
             return await Order.findByPk(orderId);
         } catch (error) {
@@ -36,7 +43,7 @@ export class OrderRepository {
         }
     }
 
-    static async findByUserId(clientId: string) {
+    async findByUserId(clientId: string) {
         try {
             return await Order.findOne({ where: { client_id: clientId } });
         } catch (error) {
