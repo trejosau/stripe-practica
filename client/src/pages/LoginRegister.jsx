@@ -20,9 +20,6 @@ const LoginRegister = () => {
         setLoading(true);
         setError(null);
 
-        console.log("Iniciando solicitud a:", endpoint);
-        console.log("Payload enviado:", payload);
-
         try {
             const response = await fetch(endpoint, {
                 method: "POST",
@@ -31,26 +28,46 @@ const LoginRegister = () => {
             });
 
             if (!response.ok) {
-                const errorData = await response.json().catch(() => ({ message: "Error desconocido" }));
+                const errorData = await response.json();
                 throw new Error(errorData.message || `HTTP error ${response.status}`);
             }
 
-            const data = await response.json();
+            const responseData = await response.json();
+            console.log("Datos recibidos:", responseData); // Verificar estructura de datos
 
-            if (isLogin) {
-                console.log("Login exitoso, redirigiendo a /dashboard");
-                window.location.href = "/";
-            } else {
-                console.log("Registro exitoso, cambiando a modo login");
-                setIsLogin(true);
+            // Asegurar que `data` existe
+            if (!responseData.data || !responseData.data.user || !responseData.data.token) {
+                throw new Error("Estructura de datos incorrecta en la respuesta.");
             }
 
+            // Extraer datos correctamente
+            const { user, token, rol } = responseData.data;
+
+            console.log("Usuario:", user);
+            console.log("Token:", token);
+            console.log("Rol:", rol);
+
+            // Guardar en localStorage
+            localStorage.setItem("userID", user.id);
+            localStorage.setItem("userName", user.username);
+            localStorage.setItem("rol", rol);
+            localStorage.setItem("token", token);
+
+            console.log("Datos guardados en localStorage");
+
+            setTimeout(() => {
+                console.log("Redirigiendo...");
+                window.location.href = "/";
+            }, 2000);
+
         } catch (err) {
+            console.error("Fetch Error:", err);
             setError(err.message || "Error al procesar la solicitud");
         } finally {
             setLoading(false);
         }
     };
+
 
 
     return (
