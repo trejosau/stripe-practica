@@ -46,13 +46,14 @@ export default function ModalProducto({ product, isOpen, onClose }) {
             >
               <div className="flex flex-col md:flex-row gap-6">
                 <img
-                  src={product.imageSrc}
-                  alt={product.imageAlt}
+                  src={product.photo}
+                  alt={product.name}
                   className="w-full md:w-1/2 rounded-lg"
                 />
                 <div className="flex-1">
                   <h2 className="text-2xl font-bold text-gray-900">{product.name}</h2>
-                  <p className="text-xl text-gray-700">{product.price}</p>
+                  <p className="text-xl text-gray-700">$ {product.price}</p>
+                  <p className="text-gray-700">{product.stock} unidades en stock</p>
 
                   {/* Estrellas */}
                   <div className="mt-4 flex items-center">
@@ -65,7 +66,7 @@ export default function ModalProducto({ product, isOpen, onClose }) {
                         )}
                       />
                     ))}
-                    <span className="ml-2 text-sm text-gray-500">(117 reviews)</span>
+                    <span className="ml-2 text-sm text-gray-500">(71 reviews)</span>
                   </div>
 
                   {/* Botón de compra */}
