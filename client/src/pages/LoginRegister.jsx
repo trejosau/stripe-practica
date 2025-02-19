@@ -164,7 +164,7 @@ const LoginRegister = () => {
                             <div>
                                 <label className="block text-sm text-gray-700">Nombre de usuario</label>
                                 <input
-                                    type="email"
+                                    type="text"
                                     className="w-full p-3 bg-gray-100 rounded focus:ring-2 focus:ring-gray-500 text-black"
                                     value={username}
                                     onChange={(e) => setUsername(e.target.value)}
