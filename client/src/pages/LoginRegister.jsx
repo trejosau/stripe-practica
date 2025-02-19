@@ -12,6 +12,11 @@ const LoginRegister = () => {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
 
+    const endpoint = isLogin ? "/api/v1/clients/login" : "/api/v1/clients/register";
+    const payload = isLogin ? { email: username, password } : { name, lastname, email: username, password };
+    
+    
+    
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
@@ -30,7 +35,27 @@ const LoginRegister = () => {
         } finally {
             setLoading(false);
         }
-    };
+    try {
+        const response = await fetch(endpoint, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+        });
+        
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || "Error en la solicitud");
+        
+        if (isLogin) {
+            window.location.href = "/dashboard";
+        } else {
+            setIsLogin(true);
+        }
+    } catch (err) {
+        setError(err.message || "Error al procesar la solicitud");
+    } finally {
+        setLoading(false);
+    }
+};
 
     return (
         <div className="bg-black text-white min-h-screen flex justify-center items-center">
