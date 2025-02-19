@@ -10,6 +10,7 @@ export const OrderService = {
             client_id: order.client_id,
             total: 0,
             status: 'pending',
+            payment_status: 'pending',
         });
 
         if (!newOrder) {
@@ -17,6 +18,10 @@ export const OrderService = {
         }
 
         return newOrder;
+    },
+
+    async updateOrderTotal(orderId: string, total: number) {
+        await OrderRepository.updateTotal(orderId, total);
     },
 
     async addProductsToOrder(orderId: string, products: { product_id: string, quantity: number }[]) {
@@ -57,7 +62,6 @@ export const OrderService = {
         // Insert order products into the database
         await OrderProductRepository.bulkCreate(orderProducts);
 
-        // Update the order total in the database
         await OrderRepository.updateTotal(orderId, totalPrice);
 
         return totalPrice; // Optionally return the total price

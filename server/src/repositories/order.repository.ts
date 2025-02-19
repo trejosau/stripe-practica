@@ -3,7 +3,7 @@ import { OrderCreationAttributes } from '../types/models/Order';
 
 export class OrderRepository {
 
-    async create(order: OrderCreationAttributes) {
+    static async create(order: OrderCreationAttributes) {
         try {
             return await Order.create(order);
         } catch (error) {
@@ -19,7 +19,7 @@ export class OrderRepository {
         );
     }
 
-    async updateTotal(orderId: string, total: number) {
+    static async updateTotal(orderId: string, total: number) {
         try {
             const order = await Order.findByPk(orderId);
             if (!order) {
@@ -34,7 +34,7 @@ export class OrderRepository {
         }
     }
 
-    async findById(orderId: string) {
+    static async findById(orderId: string) {
         try {
             return await Order.findByPk(orderId);
         } catch (error) {
@@ -43,7 +43,7 @@ export class OrderRepository {
         }
     }
 
-    async findByUserId(clientId: string) {
+    static async findByUserId(clientId: string) {
         try {
             return await Order.findOne({ where: { client_id: clientId } });
         } catch (error) {
