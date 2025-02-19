@@ -12,6 +12,13 @@ export class OrderRepository {
         }
     }
 
+    async updatePaymentStatus(orderId: string, status: string, stripePaymentId: string) {
+        return await Order.update(
+            { payment_status: status, stripe_payment_id: stripePaymentId },
+            { where: { id: orderId } }
+        );
+    }
+
     static async updateTotal(orderId: string, total: number) {
         try {
             const order = await Order.findByPk(orderId);

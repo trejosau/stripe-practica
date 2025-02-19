@@ -60,8 +60,10 @@ export const authenticateJWT = (requiredRoles: string[]) => {
             return; // Detener el flujo si no tiene permisos
         }
 
+        // @ts-ignore
         req.user = user;
+        // @ts-ignore
         req.user.roles = userRoles;
-        next(); // Continuar al siguiente middleware si todo está bien
+        next();
     };
 };
