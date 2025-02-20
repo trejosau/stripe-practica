@@ -34,7 +34,7 @@ export default function Home() {
           transition={{ duration: 1, delay: 0.3 }}
           className="mt-4 text-white text-lg text-gray-300 max-w-2xl uppercase"
         >
-          ENCUENTRA LA GORRA PERFECTA PARA CADA OCASIÓN. PERSONALIZA TU ESTILO CON DISEÑOS ÚNICOS.
+          DESCUBRE NUESTRAS GORRAS EXCLUSIVAS Y ENCUENTRA LA QUE MEJOR SE ADAPTE A TU ESTILO.
         </motion.p>
 
         <motion.div 

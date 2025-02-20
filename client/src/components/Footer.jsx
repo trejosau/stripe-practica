@@ -15,7 +15,7 @@ export default function Footer() {
         </motion.h2>
 
         <nav className="flex space-x-8">
-          {['Inicio', 'Catálogo', 'Personalizadas', 'Contacto'].map((item) => (
+          {['Inicio', 'Catálogo', 'Contacto'].map((item) => (
             <motion.a
               key={item}
               href="#"

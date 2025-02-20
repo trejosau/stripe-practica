@@ -59,36 +59,6 @@ export default function Navbar() {
                 </motion.a>
             ))}
 
-            {/* Carrito de compras con dropdown */}
-            <div className="relative">
-              <button onClick={() => toggleDropdown('cart')} className="relative">
-                <FaShoppingBasket className="h-8 w-8 text-black" />
-                {cartItems > 0 && (
-                    <span className="absolute top-0 right-0 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                  {cartItems}
-                </span>
-                )}
-              </button>
-
-              <AnimatePresence>
-                {activeDropdown === 'cart' && (
-                    <motion.div
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        className="absolute right-0 mt-2 w-64 bg-white shadow-lg rounded-md z-10 p-4"
-                    >
-                      <p className="text-lg font-semibold">Carrito</p>
-                      {cartItems > 0 ? (
-                          <p className="text-gray-600">Tienes {cartItems} productos en tu carrito.</p>
-                      ) : (
-                          <p className="text-gray-600">Tu carrito está vacío.</p>
-                      )}
-                    </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-
             {/* Menú de usuario con dropdown */}
             <div className="relative">
               <button
@@ -111,6 +81,12 @@ export default function Navbar() {
                       {isLoggedIn ? (
                           <>
                             <p className="block px-4 py-2 text-lg font-semibold text-black">{userName}</p>
+                            <motion.a
+                                href="/pedidos"
+                                className="block px-4 py-2 text-lg text-black hover:bg-gray-200 transition"
+                            >
+                              Mis pedidos
+                            </motion.a>
                             <button
                                 onClick={handleLogout}
                                 className="block px-4 py-2 text-lg text-red-600 hover:bg-gray-200 transition w-full text-left"
@@ -139,72 +115,7 @@ export default function Navbar() {
               </AnimatePresence>
             </div>
           </div>
-
-          {/* Botón de menú móvil */}
-          <button className="lg:hidden text-black" onClick={() => setIsOpen(true)}>
-            <FaBars className="h-8 w-8" />
-          </button>
         </nav>
-
-        {/* Menú móvil */}
-        <AnimatePresence>
-          {isOpen && (
-              <motion.div
-                  className="fixed inset-0 bg-white bg-opacity-95 flex flex-col items-center justify-center space-y-6 text-black"
-                  initial={{ opacity: 0, y: '-100%' }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: '-100%' }}
-              >
-                {navigation.map((item) => (
-                    <motion.a
-                        key={item}
-                        href={item === 'Inicio' ? '/' : '/catalogo'}
-                        className="text-2xl font-semibold"
-                        whileHover={{ scale: 1.1 }}
-                        onClick={() => setIsOpen(false)}
-                    >
-                      {item}
-                    </motion.a>
-                ))}
-
-                {isLoggedIn ? (
-                    <div className="flex flex-col items-center">
-                      <FaUser className="h-8 w-8 text-black" />
-                      <p className="text-xl font-semibold">{userName}</p>
-                      <button
-                          onClick={handleLogout}
-                          className="text-xl text-red-600 mt-4"
-                      >
-                        Cerrar sesión
-                      </button>
-                    </div>
-                ) : (
-                    <div className="flex flex-col items-center">
-                      <motion.a
-                          href="/auth"
-                          className="text-2xl font-semibold"
-                          whileHover={{ scale: 1.1 }}
-                          onClick={() => setIsOpen(false)}
-                      >
-                        Iniciar sesión
-                      </motion.a>
-                      <motion.a
-                          href="/auth"
-                          className="text-2xl font-semibold"
-                          whileHover={{ scale: 1.1 }}
-                          onClick={() => setIsOpen(false)}
-                      >
-                        Registrarse
-                      </motion.a>
-                    </div>
-                )}
-
-                <button onClick={() => setIsOpen(false)} className="absolute top-6 right-6 text-black">
-                  <FaTimes className="h-8 w-8" />
-                </button>
-              </motion.div>
-          )}
-        </AnimatePresence>
       </header>
   );
 }
