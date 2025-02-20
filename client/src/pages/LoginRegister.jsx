@@ -27,38 +27,37 @@ const LoginRegister = () => {
                 body: JSON.stringify(payload),
             });
 
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || `HTTP error ${response.status}`);
+
+
+
+
+            if (isLogin) {
+                const responseData = await response.json();
+
+                // Extraer datos correctamente
+                const { user, token, rol } = responseData.data;
+
+                console.log("Usuario:", user);
+                console.log("Token:", token);
+                console.log("Rol:", rol);
+
+                // Guardar en localStorage
+                localStorage.setItem("userID", user.id);
+                localStorage.setItem("userName", user.username);
+                localStorage.setItem("rol", rol);
+                localStorage.setItem("token", token);
+
+                console.log("Datos guardados en localStorage");
+
+                setTimeout(() => {
+                    console.log("Redirigiendo...");
+                    window.location.href = "/";
+                }, 2000);
             }
-
-            const responseData = await response.json();
-            console.log("Datos recibidos:", responseData); // Verificar estructura de datos
-
-            // Asegurar que `data` existe
-            if (!responseData.data || !responseData.data.user || !responseData.data.token) {
-                throw new Error("Estructura de datos incorrecta en la respuesta.");
+            else {
+                console.log("Registro exitoso. Intentando iniciar sesión...");
+                setIsLogin(true);
             }
-
-            // Extraer datos correctamente
-            const { user, token, rol } = responseData.data;
-
-            console.log("Usuario:", user);
-            console.log("Token:", token);
-            console.log("Rol:", rol);
-
-            // Guardar en localStorage
-            localStorage.setItem("userID", user.id);
-            localStorage.setItem("userName", user.username);
-            localStorage.setItem("rol", rol);
-            localStorage.setItem("token", token);
-
-            console.log("Datos guardados en localStorage");
-
-            setTimeout(() => {
-                console.log("Redirigiendo...");
-                window.location.href = "/";
-            }, 2000);
 
         } catch (err) {
             console.error("Fetch Error:", err);
