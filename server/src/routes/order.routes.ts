@@ -7,4 +7,7 @@ const router = Router();
 
 router.post('/', authenticateJWT(['client']), OrderController.registerOrder);
 
+router.get('/:userID', OrderController.getOrdersByUser);
+
+
 export default router;

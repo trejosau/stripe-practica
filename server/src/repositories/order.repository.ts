@@ -1,5 +1,7 @@
 import Order from '../models/Order.model';
 import { OrderCreationAttributes } from '../types/models/Order';
+import OrderProduct from "../models/OrderProduct.model";
+import Product from "../models/Product.model";
 
 export class OrderRepository {
 
@@ -43,13 +45,29 @@ export class OrderRepository {
         }
     }
 
-    static async findByUserId(clientId: string) {
+    static async findAllByUserId(userId: string) {
         try {
-            return await Order.findOne({ where: { client_id: clientId } });
+            const orders = await Order.findAll({
+                where: { user_id: userId },
+                include: [
+                    {
+                        model: OrderProduct,
+                        as: 'order_products',
+                        include: [
+                            {
+                                model: Product,
+                                as: 'product',
+                            },
+                        ],
+                    },
+                ],
+            });
+            return orders;
         } catch (error) {
-            console.error('Error fetching order:', error);
-            return null;
+            console.error('Error fetching orders from repository:', error);
+            throw new Error('Database error while fetching orders');
         }
     }
+
 
 }

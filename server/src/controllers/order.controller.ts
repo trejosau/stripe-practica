@@ -4,6 +4,30 @@ import { PaymentService } from '../services/payment.service';
 import { formatResponse } from '../utils/responseFormatter';
 
 export const OrderController = {
+
+    async getOrdersByUser(req: Request, res: Response) {
+        try {
+            const userId = req.params.userId; // Note: Changed to userId to match typical camelCase convention
+
+            if (!userId || typeof userId !== 'string') {
+                res.status(400).json({ message: 'Invalid user ID' });
+                return;
+            }
+
+            const orders = await OrderService.getOrdersByUserId(userId);
+            res.status(200).json({
+                success: true,
+                data: orders,
+            });
+        } catch (error) {
+            console.error('Error in OrderController.getOrdersByUser:', error);
+            res.status(500).json({
+                success: false,
+                message: 'Internal server error',
+            });
+        }
+    },
+
     async registerOrder(req: Request, res: Response) {
         const { client_id, products } = req.body;
 
@@ -39,5 +63,7 @@ export const OrderController = {
             res.status(400).json(formatResponse('error', 'Error al crear el pedido', error instanceof Error ? error.message : error));
         }
     }
+
+
 
 };

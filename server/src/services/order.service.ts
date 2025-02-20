@@ -3,8 +3,22 @@ import { OrderProductRepository } from "../repositories/orderProduct.repository"
 import { OrderCreationAttributes } from "../types/models/Order";
 import { OrderProductCreationAttributes } from "../types/models/OrderProduct";
 import {ProductRepository} from "../repositories/product.repository";
+import Order from "../models/Order.model";
 
 export const OrderService = {
+    async getOrdersByUserId(userId: string): Promise<Order[]> {
+        try {
+            const orders = await OrderRepository.findAllByUserId(userId);
+            if (!orders || orders.length === 0) {
+                return [];
+            }
+            return orders;
+        } catch (error) {
+            console.error('Error in OrderService:', error);
+            throw new Error('Failed to retrieve orders');
+        }
+    },
+
     async registerOrder(order: OrderCreationAttributes) {
         const newOrder = await OrderRepository.create({
             client_id: order.client_id,
