@@ -8,7 +8,6 @@ export const registerProduct = (req: Request, res: Response) => {
     try {
         const newProduct = ProductService.registerProduct({
             name,
-            description,
             photo,
             price,
             stock,
@@ -28,5 +27,16 @@ export const getProduct = (req: Request, res: Response) => {
         res.status(200).json(formatResponse('success', 'Producto obtenido con éxito', product));
     } catch (error) {
         res.status(400).json(formatResponse('error', 'Error al obtener el producto', error instanceof Error ? error.message : error));
+    }
+};
+
+export const getProducts = async (req: Request, res: Response) => {
+    try {
+        const products = await ProductService.getProducts();
+        console.log('Productos obtenidos:', products);
+        res.status(200).json(formatResponse('success', 'Productos obtenidos con éxito', products));
+    } catch (error) {
+        console.error('Error en getProducts:', error);
+        res.status(400).json(formatResponse('error', 'Error al obtener los productos', error instanceof Error ? error.message : error));
     }
 };

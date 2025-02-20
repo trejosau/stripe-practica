@@ -30,4 +30,13 @@ export class ProductRepository {
         }
     }
 
+    static async findAll() {
+        try {
+            return await Product.findAll();
+        } catch (error) {
+            console.error('Error fetching products:', error);
+            return null;
+        }
+    }
+
 }

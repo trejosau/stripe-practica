@@ -14,7 +14,6 @@ export const ProductService = {
 
         const newProduct = await ProductRepository.create({
             name: product.name,
-            description: product.description,
             photo: product.photo,
             price: product.price,
             stock: product.stock,
@@ -33,7 +32,14 @@ export const ProductService = {
             throw new Error('No se encontró el producto con el ID proporcionado');
         }
         return product;
-    }
+    },
+    async getProducts() {
+        const products = await ProductRepository.findAll();
+        if (!products) {
+            throw new Error('No se pudieron obtener los productos');
+        }
+        return products;
+    },
 
 
 };
