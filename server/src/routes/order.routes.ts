@@ -5,7 +5,7 @@ import { authenticateJWT } from '../middlewares/auth.middleware';
 
 const router = Router();
 
-router.post('/', authenticateJWT(['client']), OrderController.registerOrder);
+router.post('/', OrderController.registerOrder);
 
 router.get('/:userID', OrderController.getOrdersByUser);
 

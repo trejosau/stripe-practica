@@ -6,8 +6,7 @@ class Order extends Model {
     public user_id!: string;
     public total_amount!: number;
     public payment_status!: 'pending' | 'confirmed' | 'failed';
-    public stripe_payment_id!: string | null; // ID del pago en Stripe
-    public total!: number;
+    public stripe_payment_id!: string | null;
 }
 
 Order.init(

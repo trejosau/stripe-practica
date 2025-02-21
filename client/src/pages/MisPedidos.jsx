@@ -5,47 +5,48 @@ import Footer from '../components/Footer';
 
 export default function MisPedidos() {
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedOrder, setSelectedOrder] = useState(null); // State for the selected order to show in modal
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const ordersPerPage = 2;
-  const loading = false;
-  const error = false;
 
-  // Simulated API data based on your schema
-  const orders = [
-    {
-      id: '123e4567-e89b-12d3-a456-426614174000',
-      createdAt: '2025-02-20 10:00:00',
-      updatedAt: '2025-02-20 10:05:00',
-      user_id: 'user-uuid-1',
-      total_amount: 150.50,
-      payment_status: 'pending',
-      stripe_payment_id: 'pi_123456789',
-      order_products: [
-        { id: 'uuid-1', order_id: '123e4567-e89b-12d3-a456-426614174000', product_id: 'prod-uuid-1', quantity: 2 },
-        { id: 'uuid-2', order_id: '123e4567-e89b-12d3-a456-426614174000', product_id: 'prod-uuid-2', quantity: 1 },
-      ],
-    },
-    {
-      id: '223e4567-e89b-12d3-a456-426614174001',
-      createdAt: '2025-02-19 15:30:00',
-      updatedAt: '2025-02-19 15:35:00',
-      user_id: 'user-uuid-2',
-      total_amount: 300.75,
-      payment_status: 'confirmed',
-      stripe_payment_id: 'pi_987654321',
-      order_products: [
-        { id: 'uuid-3', order_id: '223e4567-e89b-12d3-a456-426614174001', product_id: 'prod-uuid-3', quantity: 3 },
-      ],
-    },
-  ];
+  const userID = localStorage.getItem('userID');
 
-  // Simulated products data
-  const products = {
-    'prod-uuid-1': { id: 'prod-uuid-1', name: 'Producto A', photo: 'url/to/photo1.jpg', price: 50.25, stock: 10 },
-    'prod-uuid-2': { id: 'prod-uuid-2', name: 'Producto B', photo: 'url/to/photo2.jpg', price: 50.00, stock: 5 },
-    'prod-uuid-3': { id: 'prod-uuid-3', name: 'Producto C', photo: 'url/to/photo3.jpg', price: 100.25, stock: 15 },
-  };
+  useEffect(() => {
+    if (!userID) {
+      setError('No se encontró userID en localStorage');
+      setLoading(false);
+      return;
+    }
 
+    const fetchOrders = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(`http://localhost:6655/api/v1/orders/${userID}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`Error ${response.status}: ${response.statusText}`);
+        }
+
+        const result = await response.json();
+        setOrders(result.data); // Extraemos los pedidos desde 'data'
+        setLoading(false);
+      } catch (err) {
+        setError(err.message);
+        setLoading(false);
+      }
+    };
+
+    fetchOrders();
+  }, [userID]);
+
+  // Paginación
   const indexOfLastOrder = currentPage * ordersPerPage;
   const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
   const currentOrders = orders.slice(indexOfFirstOrder, indexOfLastOrder);
@@ -78,7 +79,7 @@ export default function MisPedidos() {
           {loading ? (
               <p className="text-lg animate-pulse">Cargando pedidos...</p>
           ) : error ? (
-              <p className="text-lg text-red-500">Error al cargar los pedidos.</p>
+              <p className="text-lg text-red-500">{error}</p>
           ) : currentOrders.length === 0 ? (
               <p className="text-lg">No tienes pedidos aún.</p>
           ) : (
@@ -133,7 +134,7 @@ export default function MisPedidos() {
           </div>
         </motion.div>
 
-        {/* Modal for Order Details */}
+        {/* Modal para detalles del pedido */}
         {selectedOrder && (
             <motion.div
                 initial={{ opacity: 0 }}
@@ -148,26 +149,9 @@ export default function MisPedidos() {
                   className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg"
               >
                 <h2 className="text-2xl font-bold mb-4">Detalles del Pedido #{selectedOrder.id.slice(0, 8)}</h2>
-                <p><strong>Fecha de Creación:</strong> {selectedOrder.createdAt}</p>
+                <p><strong>Fecha de Creación:</strong> {new Date(selectedOrder.createdAt).toLocaleString()}</p>
                 <p><strong>Total:</strong> ${selectedOrder.total_amount}</p>
                 <p><strong>Estado:</strong> {selectedOrder.payment_status}</p>
-                <p><strong>ID de Pago Stripe:</strong> {selectedOrder.stripe_payment_id || 'No disponible'}</p>
-
-                <h3 className="text-xl font-semibold mt-4">Productos</h3>
-                <ul className="space-y-2 mt-2">
-                  {selectedOrder.order_products.map((orderProduct) => {
-                    const product = products[orderProduct.product_id];
-                    return (
-                        <li key={orderProduct.id} className="flex justify-between border-b py-2">
-                          <div>
-                            <p><strong>{product.name}</strong></p>
-                            <p>Cantidad: {orderProduct.quantity}</p>
-                          </div>
-                          <p>${(product.price * orderProduct.quantity).toFixed(2)}</p>
-                        </li>
-                    );
-                  })}
-                </ul>
 
                 <motion.button
                     whileHover={{ scale: 1.05 }}

@@ -1,9 +1,9 @@
-import { Router } from "express";
-import { PaymentController } from "../controllers/payment.controller";
+// src/routes/payment.routes.ts
+import { Router } from 'express';
+import { PaymentController } from '../controllers/payment.controller';
 
 const router = Router();
 
-router.post("/create-payment-intent", PaymentController.createPaymentIntent);
-router.post("/confirm-payment", PaymentController.confirmPayment);
+router.post('/create-intent', PaymentController.createPaymentIntent);
 
 export default router;

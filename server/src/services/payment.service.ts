@@ -1,28 +1,18 @@
+// src/services/payment.service.ts
 import { stripeConfig } from '../config/stripe.config';
-import { OrderRepository } from '../repositories/order.repository';
-
-const orderRepository = new OrderRepository(); // 🔹 Instanciamos el repositorio
 
 export const PaymentService = {
-    async createPaymentIntent(orderId: string, amount: number) {
+    async createPaymentIntent(orderId: string | null, amount: number) {
         try {
             const paymentIntent = await stripeConfig.paymentIntents.create({
-                amount: amount * 100, // Convertimos a centavos
-                currency: 'usd',
-                metadata: { orderId },
+                amount: Math.round(amount * 100), // Stripe usa centavos
+                currency: 'usd', // Cambia según tu moneda
+                metadata: orderId ? { orderId } : {}, // Solo incluye orderId si existe
             });
-
             return paymentIntent.client_secret;
         } catch (error) {
-            throw new Error('Error al crear Payment Intent');
-        }
-    },
-
-    async confirmPayment(orderId: string, stripePaymentId: string) {
-        try {
-            await orderRepository.updatePaymentStatus(orderId, 'confirmed', stripePaymentId); // 🔹 Usamos la instancia
-        } catch (error) {
-            throw new Error('Error al confirmar el pago');
+            console.error('Error creating PaymentIntent:', error);
+            throw new Error('Failed to create payment intent');
         }
     },
 };

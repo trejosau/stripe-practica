@@ -1,69 +1,57 @@
+// src/controllers/order.controller.ts
 import { Request, Response } from 'express';
 import { OrderService } from '../services/order.service';
-import { PaymentService } from '../services/payment.service';
 import { formatResponse } from '../utils/responseFormatter';
+import Order from '../models/Order.model'; // Importar el modelo para tipado
 
 export const OrderController = {
+    async registerOrder(req: Request, res: Response) {
+        const { client_id, products } = req.body; // client_id viene del frontend
 
-    async getOrdersByUser(req: Request, res: Response) {
         try {
-            const userId = req.params.userId; // Note: Changed to userId to match typical camelCase convention
+            console.log('Datos recibidos:', { client_id, products });
 
-            if (!userId || typeof userId !== 'string') {
-                res.status(400).json({ message: 'Invalid user ID' });
-                return;
+            // Validación básica
+            if (!client_id || !products || !Array.isArray(products) || products.length === 0) {
+                throw new Error('Datos incompletos: client_id y products son requeridos');
             }
 
-            const orders = await OrderService.getOrdersByUserId(userId);
-            res.status(200).json({
-                success: true,
-                data: orders,
+            console.log('Registrando orden...');
+            const newOrder: Order = await OrderService.registerOrder({
+                user_id: client_id,      // Mapear client_id a user_id
+                total_amount: 0,         // Valor inicial, se actualizará después
+                payment_status: 'confirmed', // Pago ya confirmado por Stripe
+                stripe_payment_id: null, // Opcional, puede ser null inicialmente
             });
-        } catch (error) {
-            console.error('Error in OrderController.getOrdersByUser:', error);
-            res.status(500).json({
-                success: false,
-                message: 'Internal server error',
-            });
-        }
-    },
+            console.log('Orden registrada:', newOrder);
 
-    async registerOrder(req: Request, res: Response) {
-        const { client_id, products } = req.body;
-
-        try {
-            // 1. Registrar la orden sin total aún
-            const newOrder = await OrderService.registerOrder({
-                client_id,
-                total: 0,
-                status: 'pending',
-                payment_status: 'pending',
-            });
-
-            // 2. Agregar productos y calcular el total
+            console.log('Agregando productos...');
             const total = await OrderService.addProductsToOrder(newOrder.id, products);
+            console.log('Total calculado:', total);
 
-            // Verificar si `total` es válido antes de continuar
             if (total <= 0) {
                 throw new Error('El total del pedido no puede ser 0 o negativo.');
             }
 
-            // 3. Actualizar el total de la orden
+            console.log('Actualizando total...');
             await OrderService.updateOrderTotal(newOrder.id, total);
+            console.log('Total actualizado');
 
-            // 4. Crear el Payment Intent con el total actualizado
-            const clientSecret = await PaymentService.createPaymentIntent(newOrder.id, total);
-
-            // 5. Responder con la orden y el clientSecret de Stripe
-            res.status(201).json(formatResponse('success', 'Pedido creado con éxito', { order: newOrder, clientSecret }));
-
+            res.status(201).json(formatResponse('success', 'Pedido creado con éxito', { order: newOrder }));
         } catch (error) {
             console.error('Error en registerOrder:', error);
-
             res.status(400).json(formatResponse('error', 'Error al crear el pedido', error instanceof Error ? error.message : error));
         }
-    }
+    },
 
-
-
+    async getOrdersByUser(req: Request, res: Response) {
+        try {
+            const userId = req.params.userID;
+            const orders = await OrderService.getOrdersByUser(userId);
+            res.status(200).json(formatResponse('success', 'Ordenes recibidas', orders));
+        } catch (error) {
+            console.error('Error en getOrdersByUser:', error);
+            res.status(400).json(formatResponse('error', 'Error al obtener las ordenes', error instanceof Error ? error.message : error));
+        }
+    },
 };

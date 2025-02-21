@@ -13,9 +13,9 @@ const router = Router();
 router.use('/admins', adminRoutes);
 router.use('/clients', clientRoutes);
 router.use('/orders', orderRoutes);
+router.use('/payments', paymentRoutes);
 router.use('/order-products', orderProductRoutes);
 router.use('/products', productRoutes);
 router.use('/users', userRoutes);
-router.use('/payments', paymentRoutes);
 
 export default router;

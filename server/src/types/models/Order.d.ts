@@ -1,9 +1,10 @@
 export interface OrderAttributes {
     id: string;
-    client_id: string;
-    total: number;
+    user_id: string;
+    total_amount: number;
     payment_status: 'pending' | 'confirmed' | 'failed';
-    status: 'pending' | 'delivered' | 'canceled' | 'completed' | 'in_progress';
+    stripe_payment_id: string | null; // ID del pago en Stripe
+
 }
 
 export interface OrderCreationAttributes extends Omit<OrderAttributes, 'id'> {}
