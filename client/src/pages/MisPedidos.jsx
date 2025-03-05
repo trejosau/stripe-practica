@@ -15,7 +15,7 @@ export default function MisPedidos() {
 
   useEffect(() => {
     if (!userID) {
-      setError('No se encontró userID en localStorage');
+      setError('Inicia sesion para acceder a esto');
       setLoading(false);
       return;
     }

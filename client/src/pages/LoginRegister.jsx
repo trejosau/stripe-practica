@@ -49,10 +49,8 @@ const LoginRegister = () => {
 
                 console.log("Datos guardados en localStorage");
 
-                setTimeout(() => {
                     console.log("Redirigiendo...");
                     window.location.href = "/";
-                }, 2000);
             }
             else {
                 console.log("Registro exitoso. Intentando iniciar sesión...");

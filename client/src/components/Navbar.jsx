@@ -114,6 +114,18 @@ export default function Navbar() {
                 )}
               </AnimatePresence>
             </div>
+
+            {/* Enlace a Swagger API Docs */}
+            <motion.a
+                href="http://localhost:6655/api-docs/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center space-x-2 text-lg text-black hover:text-gray-600 transition"
+                whileHover={{ scale: 1.1 }}
+            >
+              <img src="https://imgs.search.brave.com/mO3-T7PMbvhHOWcyYxJhiJG9m9ldeWZn3ZAiZ4YP2lU/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly91cGxv/YWQud2lraW1lZGlh/Lm9yZy93aWtpcGVk/aWEvY29tbW9ucy9h/L2FiL1N3YWdnZXIt/bG9nby5wbmc" alt="Swagger Logo" className="h-6 w-6" />
+              <span>Documentación</span>
+            </motion.a>
           </div>
         </nav>
       </header>
