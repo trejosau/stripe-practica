@@ -5,6 +5,7 @@ import Navbar from "./components/Navbar";
 import Catalogo from "./pages/Catalogo";
 import ToastNotification from './components/ToastNotification'; // Importa el componente ToastNotification
 import MisPedidos from "./pages/MisPedidos";
+import Cancel from "./pages/Cancel";
 
 const App = () => {
   return (
@@ -28,6 +29,7 @@ const AppContent = () => {
         <Route path="/auth" element={<LoginRegister />} />
         <Route path="/catalogo" element={<Catalogo />} />
         <Route path="/pedidos" element={<MisPedidos />} />
+        <Route path="/cancel" element={<Cancel />} />
       </Routes>
     </>
   );
