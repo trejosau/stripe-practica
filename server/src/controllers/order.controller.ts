@@ -6,14 +6,14 @@ import Order from '../models/Order.model'; // Importar el modelo para tipado
 
 export const OrderController = {
     async registerOrder(req: Request, res: Response) {
-        const { client_id, products } = req.body; // client_id viene del frontend
+        const { client_id, events } = req.body; // client_id viene del frontend
 
         try {
-            console.log('Datos recibidos:', { client_id, products });
+            console.log('Datos recibidos:', { client_id, events });
 
             // Validación básica
-            if (!client_id || !products || !Array.isArray(products) || products.length === 0) {
-                throw new Error('Datos incompletos: client_id y products son requeridos');
+            if (!client_id || !events || !Array.isArray(events) || events.length === 0) {
+                throw new Error('Datos incompletos: client_id y events son requeridos');
             }
 
             console.log('Registrando orden...');
@@ -26,7 +26,7 @@ export const OrderController = {
             console.log('Orden registrada:', newOrder);
 
             console.log('Agregando productos...');
-            const total = await OrderService.addProductsToOrder(newOrder.id, products);
+            const total = await OrderService.addProductsToOrder(newOrder.id, events);
             console.log('Total calculado:', total);
 
             if (total <= 0) {

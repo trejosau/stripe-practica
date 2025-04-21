@@ -6,13 +6,13 @@ import { formatResponse } from '../utils/responseFormatter';
 export const AdminController = {
     async registerAdmin(req: Request, res: Response) {
         try {
-            const { name, lastname, username, password } = req.body;
-            if (!name || !lastname || !username || !password) {
+            const { name, lastname, username, password, phone } = req.body;
+            if (!name || !lastname || !username || !password || !phone) {
                 throw new Error('Faltan datos');
             }
 
             // Primero crear el usuario
-            const newUser = await UserService.registerUser({ username, password });
+            const newUser = await UserService.registerUser({ username, password, phone });
 
             // Luego crear el cliente usando el user_id
             const newAdmin = await AdminService.registerAdmin({

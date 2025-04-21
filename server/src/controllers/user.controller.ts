@@ -6,13 +6,13 @@ import { formatResponse } from '../utils/responseFormatter';
 export const UserController = {
     async loginUser(req: Request, res: Response) {
         try {
-            const { username, password } = req.body;
-            if (!username || !password) {
+            const { username, password, phone } = req.body;
+            if (!username || !password || !phone) {
                 throw new Error('Faltan datos');
             }
 
-            // Primero crear el usuario
-            const newUser = await UserService.loginUser({ username, password });
+            // Primero crear el usuariophoneN
+            const newUser = await UserService.loginUser({ username, password, phone });
 
             res.status(200).json(formatResponse('success', 'Usuario logueado correctamente', newUser));
         } catch (error) {

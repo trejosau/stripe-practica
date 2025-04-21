@@ -4,13 +4,14 @@ dotenv.config();
 
 import app from './app';
 import sequelize from './config/db.config';
+import './config/mqtt.config';
 
 // Importar modelos
 import './models/Admin.model';
 import './models/Client.model';
 import './models/Order.model';
 import './models/OrderProduct.model';
-import './models/Product.model';
+import './models/Event.model';
 import './models/User.model';
 
 import swaggerUi from 'swagger-ui-express';
@@ -36,7 +37,6 @@ const startServer = async () => {
         // Iniciar el servidor
         app.listen(PORT, () => {
             console.log(`Servidor corriendo en el puerto ${PORT}`);
-            console.log(`Documentación disponible en http://localhost:${PORT}/api-docs`);
         });
 
     } catch (error) {

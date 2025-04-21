@@ -2,15 +2,17 @@ import { DataTypes, Model } from 'sequelize';
 import { v4 as uuidv4 } from 'uuid';
 import sequelize from '../config/db.config';
 import Order from './Order.model';
-import Product from './Product.model';
+import Event from './Event.model';
 import { OrderProductAttributes, OrderProductCreationAttributes } from '../types/models/OrderProduct';
 
 class OrderProduct extends Model<OrderProductAttributes, OrderProductCreationAttributes> implements OrderProductAttributes {
     public id!: string;
     public order_id!: string;
-    public product_id!: string;
+    public event_id!: string;  // Verifica que sea event_id y no product_id
     public quantity!: number;
 }
+
+
 
 OrderProduct.init(
     {
@@ -27,11 +29,11 @@ OrderProduct.init(
                 key: 'id',
             },
         },
-        product_id: {
+        event_id: {  // Asegúrate de que el campo se llame event_id
             type: DataTypes.UUID,
             allowNull: false,
             references: {
-                model: Product,
+                model: Event,
                 key: 'id',
             },
         },
@@ -45,6 +47,6 @@ OrderProduct.init(
         tableName: 'order_products',
         timestamps: false,
     }
+    
 );
-
-export default OrderProduct;
+export default OrderProduct; 

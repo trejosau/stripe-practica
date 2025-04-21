@@ -6,6 +6,7 @@ class User extends Model<UserAttributes, UserCreationAttributes> {
     public id!: string;
     public username!: string;
     public password!: string;
+    public phone!: string;
 }
 
 User.init(
@@ -23,6 +24,10 @@ User.init(
             type: DataTypes.STRING,
             allowNull: false,
         },
+        phone:{
+            type: DataTypes.STRING,
+            allowNull: false,
+        }
     },
     {
         sequelize,

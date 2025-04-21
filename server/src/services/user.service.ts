@@ -2,30 +2,49 @@ import bcrypt from 'bcrypt';
 import { UserRepository } from "../repositories/user.repository";
 import { UserCreationAttributes } from "../types/models/User";
 import { generateToken } from '../utils/jwt';
+import Twilio from 'twilio';
+
+const twilioClient = Twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 
 export const UserService = {
     async registerUser(user: UserCreationAttributes) {
-        // Check if the username already exists
+        // Verificar si el usuario ya existe
         const existingUser = await UserRepository.findByUsername(user.username);
         if (existingUser) {
             throw new Error('El nombre de usuario ya está en uso');
         }
 
-        // Hash the password before saving it
+        // Hashear la contraseña antes de guardarla
         const hashedPassword = await bcrypt.hash(user.password, 10);
 
-        // Create a new user record
+        // Crear nuevo usuario con el número de teléfono incluido
         const newUser = await UserRepository.create({
             username: user.username,
             password: hashedPassword,
+            phone: user.phone, // Asegúrate de que tu modelo y BD soporten este campo
         });
 
-        // Check if user creation was successful
         if (!newUser) {
             throw new Error('No se pudo crear el usuario');
         }
 
-        return newUser; // Return the new user object
+        // Mensaje de confirmación para el usuario registrado
+        const message = `¡Bienvenido a TicketMaistro, ${user.username}! Tu registro fue exitoso.`;
+
+        try {
+            console.log('Enviando mensaje de confirmación a:', user.phone);
+            console.log('Mensaje:', message);
+            await twilioClient.messages.create({
+                body: message,
+                from: process.env.TWILIO_PHONE_NUMBER,
+                to: '+528715348926', 
+            });
+        } catch (error) {
+            console.error('Error al enviar mensaje de confirmación:', error);
+            throw new Error('Error al enviar mensaje de confirmación');
+        }
+
+        return newUser;
     },
 
     async loginUser(user: UserCreationAttributes) {

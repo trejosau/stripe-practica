@@ -11,7 +11,7 @@ const App = () => {
   return (
     <Router>
       <AppContent />
-      <ToastNotification /> {/* Asegúrate de que el ToastContainer esté en algún lugar dentro de la aplicación */}
+      <ToastNotification />
     </Router>
   );
 };
@@ -21,13 +21,12 @@ const AppContent = () => {
 
   return (
     <>
-      {/* Solo muestra el Navbar si la ruta no es '/auth' */}
       {location.pathname !== "/auth" && <Navbar />}
       
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/auth" element={<LoginRegister />} />
-        <Route path="/catalogo" element={<Catalogo />} />
+        <Route path="/events" element={<Catalogo />} />
         <Route path="/pedidos" element={<MisPedidos />} />
         <Route path="/cancel" element={<Cancel />} />
       </Routes>
